@@ -34,3 +34,20 @@ export async function getPostsByCategory(slug: string) {
 export async function getRelatedPosts(post: Post, limit = 3) {
   return pickRelated(await getAllPosts(), post, limit)
 }
+
+export async function getPostsByTag(tag: string) {
+  return (await getLatestPosts()).filter((p) => p.tags.includes(tag))
+}
+
+export async function getAllTags() {
+  const posts = await getAllPosts()
+  const counts = new Map<string, number>()
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1)
+    }
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([tag, count]) => ({ tag, count }))
+}

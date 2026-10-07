@@ -105,9 +105,14 @@ export default async function ArticlePage({ params }: Props) {
             </div>
             <ul className="flex flex-wrap gap-2" aria-label="タグ">
               {post.tags.map((tag) => (
-                <li key={tag} className="rounded border bg-card px-2 py-0.5 text-xs text-muted-foreground">
-                  {'#'}
-                  {tag}
+                <li key={tag}>
+                  <Link
+                    href={`/tag/${encodeURIComponent(tag)}`}
+                    className="rounded border bg-card px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    {'#'}
+                    {tag}
+                  </Link>
                 </li>
               ))}
             </ul>

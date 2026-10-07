@@ -35,6 +35,21 @@ export function ArticleCard({ post }: { post: Post }) {
             {'min'}
           </span>
         </div>
+        {post.tags.length > 0 && (
+          <ul className="flex flex-wrap gap-1.5">
+            {post.tags.slice(0, 3).map((tag) => (
+              <li key={tag}>
+                <Link
+                  href={`/tag/${encodeURIComponent(tag)}`}
+                  className="rounded border bg-card px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                >
+                  {'#'}
+                  {tag}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </article>
   )
