@@ -4,9 +4,12 @@ import { ArticleCard } from '@/components/article-card'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 import { CategoryNav } from '@/components/category-nav'
 import { Sidebar } from '@/components/sidebar'
-import { categories, getCategory, getPostsByCategory } from '@/lib/posts'
+import { getPostsByCategory } from '@/lib/content'
+import { categories, getCategory } from '@/lib/posts'
 
 type Props = { params: Promise<{ slug: string }> }
+
+export const revalidate = 300
 
 export function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }))
@@ -27,7 +30,7 @@ export default async function CategoryPage({ params }: Props) {
   const { slug } = await params
   const category = getCategory(slug)
   if (!category) notFound()
-  const list = getPostsByCategory(slug)
+  const list = await getPostsByCategory(slug)
 
   return (
     <main className="mx-auto max-w-6xl px-4 pt-6">

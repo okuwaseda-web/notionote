@@ -67,6 +67,14 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             )
           case 'affiliate':
             return <AffiliateBox key={i} tool={tools[block.toolId]} />
+          case 'image':
+            return (
+              <figure key={i} className="flex flex-col gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element -- Notion image URLs come from arbitrary hosts */}
+                <img src={block.src || '/placeholder.svg'} alt={block.caption} loading="lazy" className="w-full rounded-xl border" />
+                {block.caption && <figcaption className="text-center text-xs text-muted-foreground">{block.caption}</figcaption>}
+              </figure>
+            )
           case 'ad':
             return <AdSlot key={i} className="my-6" />
           default:

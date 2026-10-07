@@ -1,7 +1,11 @@
 import type { MetadataRoute } from 'next'
-import { categories, posts, SITE } from '@/lib/posts'
+import { getAllPosts } from '@/lib/content'
+import { categories, SITE } from '@/lib/posts'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 300
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = await getAllPosts()
   return [
     { url: SITE.url, changeFrequency: 'daily', priority: 1 },
     ...categories.map((c) => ({ url: `${SITE.url}/category/${c.slug}`, changeFrequency: 'weekly' as const, priority: 0.7 })),

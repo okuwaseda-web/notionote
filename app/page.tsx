@@ -4,11 +4,14 @@ import { AuthorBox } from '@/components/author-box'
 import { BeginnerSteps } from '@/components/beginner-steps'
 import { CategoryNav } from '@/components/category-nav'
 import { HomeHero } from '@/components/home-hero'
-import { getLatestPosts, getPopularPosts, SITE } from '@/lib/posts'
+import { getLatestPosts, getPopularPosts } from '@/lib/content'
+import { SITE } from '@/lib/posts'
 
-export default function HomePage() {
-  const featured = getPopularPosts(1)[0]
-  const latest = getLatestPosts()
+export const revalidate = 300
+
+export default async function HomePage() {
+  const [popular, latest] = await Promise.all([getPopularPosts(1), getLatestPosts()])
+  const featured = popular[0] ?? latest[0]
 
   const jsonLd = {
     '@context': 'https://schema.org',

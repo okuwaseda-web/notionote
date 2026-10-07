@@ -64,6 +64,7 @@ export type Block =
   | { type: 'point'; title: string; text: string }
   | { type: 'prompt'; label: string; text: string }
   | { type: 'affiliate'; toolId: keyof typeof tools }
+  | { type: 'image'; src: string; caption: string }
   | { type: 'ad' }
 
 export type Post = {
@@ -87,7 +88,7 @@ export const author = {
   bio: 'SIerでシステムエンジニアとして7年間、業務システムの開発・運用を担当。生成AIで資料作成や調査の時間を大幅に減らした経験から、非エンジニアの若手会社員にも分かる「明日から使えるAI仕事術」を発信しています。',
 }
 
-export const posts: Post[] = [
+export const samplePosts: Post[] = [
   {
     slug: 'chatgpt-prompt-templates',
     title: '【コピペOK】ChatGPTの仕事効率化プロンプト30選｜メール・資料・企画が10分で終わる',
@@ -120,7 +121,7 @@ export const posts: Post[] = [
       { type: 'affiliate', toolId: 'chatgpt' },
       { type: 'h2', id: 'learning', text: '学習・スキルアップに使えるプロンプト' },
       { type: 'p', text: 'ChatGPTは「24時間質問できる家庭教師」としても優秀です。業界用語や新しい業務知識を、自分のレベルに合わせて教えてもらいましょう。' },
-      { type: 'prompt', label: '理解度チェック', text: '{トピック}について、入社1年目の社会人にもわかるよう��説明してください。\nその後、理解度を確認するための問題を3問出してください。' },
+      { type: 'prompt', label: '理解度チェック', text: '{トピック}について��入社1年目の社会人にもわかるよう��説明してください。\nその後、理解度を確認するための問題を3問出してください。' },
       { type: 'h2', id: 'tips', text: '回答の精度をさらに上げる3つのコツ' },
       { type: 'list', items: ['一度で完璧を求めず「もっと具体的に」「別案を3つ」と追加で頼む', '良い回答例（お手本）を一緒に渡す', '社外秘・個人情報は入力しない（社内ルールを必ず確認）'] },
       { type: 'h2', id: 'summary', text: 'まとめ：まずは毎日1回、AIに仕事を頼んでみよう' },
@@ -245,27 +246,19 @@ export const posts: Post[] = [
   },
 ]
 
-export function getPost(slug: string) {
-  return posts.find((p) => p.slug === slug)
-}
-
 export function getCategory(slug: string) {
   return categories.find((c) => c.slug === slug)
 }
 
-export function getLatestPosts() {
+export function sortLatest(posts: Post[]) {
   return [...posts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
 
-export function getPopularPosts(limit = 5) {
+export function sortPopular(posts: Post[], limit = 5) {
   return [...posts].sort((a, b) => b.monthlyViews - a.monthlyViews).slice(0, limit)
 }
 
-export function getPostsByCategory(slug: string) {
-  return getLatestPosts().filter((p) => p.category === slug)
-}
-
-export function getRelatedPosts(post: Post, limit = 3) {
+export function pickRelated(posts: Post[], post: Post, limit = 3) {
   return posts
     .filter((p) => p.slug !== post.slug)
     .map((p) => ({

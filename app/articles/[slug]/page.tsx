@@ -10,17 +10,20 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 import { ShareButtons } from '@/components/share-buttons'
 import { Sidebar } from '@/components/sidebar'
 import { TableOfContents } from '@/components/table-of-contents'
-import { author, formatDate, getCategory, getPost, getRelatedPosts, posts, SITE } from '@/lib/posts'
+import { getAllPosts, getPost, getRelatedPosts } from '@/lib/content'
+import { author, formatDate, getCategory, SITE } from '@/lib/posts'
 
 type Props = { params: Promise<{ slug: string }> }
 
-export function generateStaticParams() {
-  return posts.map((p) => ({ slug: p.slug }))
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  return (await getAllPosts()).map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = getPost(slug)
+  const post = await getPost(slug)
   if (!post) return {}
   return {
     title: post.title,
@@ -41,11 +44,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params
-  const post = getPost(slug)
+  const post = await getPost(slug)
   if (!post) notFound()
 
   const category = getCategory(post.category)
-  const related = getRelatedPosts(post)
+  const related = await getRelatedPosts(post)
   const url = `${SITE.url}/articles/${post.slug}`
 
   const jsonLd = {
@@ -53,7 +56,7 @@ export default async function ArticlePage({ params }: Props) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
-    image: `${SITE.url}${post.image}`,
+    image: post.image.startsWith('http') ? post.image : `${SITE.url}${post.image}`,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
     author: { '@type': 'Person', name: author.name },

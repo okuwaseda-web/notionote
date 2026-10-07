@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
-import { getPopularPosts } from '@/lib/posts'
+import { getPopularPosts } from '@/lib/content'
 
-export function PopularRanking({ limit = 5, excludeSlug }: { limit?: number; excludeSlug?: string }) {
-  const ranked = getPopularPosts(limit + 1)
+export async function PopularRanking({ limit = 5, excludeSlug }: { limit?: number; excludeSlug?: string }) {
+  const ranked = (await getPopularPosts(limit + 1))
     .filter((p) => p.slug !== excludeSlug)
     .slice(0, limit)
 
