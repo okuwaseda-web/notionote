@@ -41,7 +41,7 @@ export function ArticleCard({ post }: { post: Post }) {
               <li key={tag}>
                 <Link
                   href={`/tag/${encodeURIComponent(tag)}`}
-                  className="rounded border bg-card px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  className="inline-block rounded border bg-card px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                 >
                   {'#'}
                   {tag}
