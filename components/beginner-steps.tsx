@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { getPost } from '@/lib/posts'
+import { getAllPosts } from '@/lib/content'
 
 const steps = [
   { label: 'AIを選ぶ', slug: 'chatgpt-claude-gemini-comparison', lead: 'まずは自分に合うAIツールを1つ決める' },
@@ -8,7 +8,14 @@ const steps = [
   { label: '武器にする', slug: 'ai-skill-career-roadmap', lead: '3ヶ月のロードマップで社内で頼られる存在に' },
 ]
 
-export function BeginnerSteps() {
+export async function BeginnerSteps() {
+  const posts = await getAllPosts()
+  const items = steps.flatMap((step) => {
+    const post = posts.find((p) => p.slug === step.slug)
+    return post ? [{ ...step, post }] : []
+  })
+  if (items.length === 0) return null
+
   return (
     <section aria-labelledby="beginner-heading" className="rounded-2xl bg-primary p-6 text-primary-foreground md:p-10">
       <div className="mb-8 flex flex-col gap-2">
@@ -18,9 +25,7 @@ export function BeginnerSteps() {
         </h2>
       </div>
       <ol className="grid gap-4 md:grid-cols-3">
-        {steps.map((step, i) => {
-          const post = getPost(step.slug)
-          if (!post) return null
+        {items.map(({ post, ...step }, i) => {
           return (
             <li key={step.slug}>
               <Link

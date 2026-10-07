@@ -1,8 +1,10 @@
 import Link from 'next/link'
-import { categories, posts } from '@/lib/posts'
+import { getAllPosts } from '@/lib/content'
+import { categories } from '@/lib/posts'
 import { cn } from '@/lib/utils'
 
-export function CategoryNav({ active }: { active?: string }) {
+export async function CategoryNav({ active }: { active?: string }) {
+  const posts = await getAllPosts()
   return (
     <nav aria-label="カテゴリで絞り込む" className="no-scrollbar -mx-4 overflow-x-auto px-4">
       <ul className="flex w-max gap-2">
