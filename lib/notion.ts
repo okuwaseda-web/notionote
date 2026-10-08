@@ -61,6 +61,8 @@ function propText(p?: Property): string {
       return plain(p.rich_text)
     case 'select':
       return p.select?.name ?? ''
+    case 'multi_select':
+      return p.multi_select.map((t) => t.name).join(', ')
     case 'status':
       return p.status?.name ?? ''
     case 'url':
@@ -78,8 +80,11 @@ function propText(p?: Property): string {
 }
 
 function resolveCategory(value: string) {
-  const match = categories.find((c) => c.slug === value || c.name === value)
-  return match?.slug ?? categories[0].slug
+  const v = value.trim()
+  const match = categories.find((c) => c.slug === v || c.name === v)
+  if (match) return match.slug
+  const partial = categories.find((c) => v.includes(c.name) || c.name.includes(v) || v.includes(c.slug))
+  return partial?.slug ?? categories[0].slug
 }
 
 function coverUrl(page: PageObjectResponse) {
