@@ -33,6 +33,25 @@ function prop(page: PageObjectResponse, names: string[]): Property | undefined {
   return undefined
 }
 
+function parseTags(p?: Property): string[] {
+  if (!p) return []
+  switch (p.type) {
+    case 'multi_select':
+      return p.multi_select.map((t) => t.name)
+    case 'select':
+      return p.select?.name ? [p.select.name] : []
+    case 'rich_text':
+      return plain(p.rich_text)
+        .split(/[,，、\s]+/)
+        .map((t) => t.trim())
+        .filter(Boolean)
+    case 'relation':
+      return []
+    default:
+      return []
+  }
+}
+
 function propText(p?: Property): string {
   if (!p) return ''
   switch (p.type) {
@@ -172,7 +191,7 @@ export async function fetchNotionPosts(): Promise<Post[]> {
         title: propText(titleProp) || '無題の記事',
         description: propText(prop(page, PROPERTY_NAMES.description)),
         category: resolveCategory(propText(prop(page, PROPERTY_NAMES.category))),
-        tags: tagsProp?.type === 'multi_select' ? tagsProp.multi_select.map((t) => t.name) : [],
+        tags: parseTags(tagsProp),
         publishedAt: propText(prop(page, PROPERTY_NAMES.publishedAt)) || page.created_time.slice(0, 10),
         updatedAt: page.last_edited_time.slice(0, 10),
         readingMinutes: readingMinutes(body),
