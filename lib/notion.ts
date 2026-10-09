@@ -27,10 +27,19 @@ function plain(rich: RichTextItemResponse[]) {
 }
 
 function prop(page: PageObjectResponse, names: string[]): Property | undefined {
+  const props = page.properties
   for (const name of names) {
-    if (page.properties[name]) return page.properties[name]
+    if (props[name]) return props[name]
+  }
+  const lower = names.map((n) => n.toLowerCase())
+  for (const key of Object.keys(props)) {
+    if (lower.includes(key.toLowerCase())) return props[key]
   }
   return undefined
+}
+
+function propByType(page: PageObjectResponse, type: Property['type']): Property | undefined {
+  return Object.values(page.properties).find((p) => p.type === type)
 }
 
 function parseTags(p?: Property): string[] {
@@ -188,7 +197,7 @@ export async function fetchNotionPosts(): Promise<Post[]> {
       const children = (await collectPaginatedAPI(notion.blocks.children.list, { block_id: page.id })).filter(isFullBlock)
       const body = toBlocks(children)
       const titleProp = Object.values(page.properties).find((p) => p.type === 'title')
-      const tagsProp = prop(page, PROPERTY_NAMES.tags)
+      const tagsProp = prop(page, PROPERTY_NAMES.tags) ?? propByType(page, 'multi_select')
       const viewsProp = prop(page, PROPERTY_NAMES.views)
 
       return {
