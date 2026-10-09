@@ -9,7 +9,7 @@ const PROPERTY_NAMES = {
   slug: ['Slug', 'スラッグ'],
   description: ['Description', '説明'],
   category: ['Category', 'カテゴリ'],
-  tags: ['Tags', 'タグ'],
+  tags: ['Tags', 'tags', 'Tag', 'tag', 'タグ'],
   publishedAt: ['PublishedAt', '公開日'],
   status: ['Status', 'ステータス'],
   image: ['Image', 'アイキャッチ'],
