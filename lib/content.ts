@@ -12,7 +12,12 @@ const loadNotionPosts = unstable_cache(fetchNotionPosts, ['notion-posts'], {
 
 export async function getAllPosts(): Promise<Post[]> {
   if (!isNotionConfigured()) return samplePosts
-  return loadNotionPosts()
+  try {
+    return await loadNotionPosts()
+  } catch (e) {
+    console.error('[content] Failed to fetch Notion posts, falling back to sample data:', e)
+    return samplePosts
+  }
 }
 
 export async function getPost(slug: string) {
